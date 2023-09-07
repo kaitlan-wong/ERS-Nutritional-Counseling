@@ -1,0 +1,46 @@
+---
+title: "Nutritional Counseling by Age Group in 2019 and 2022"
+author: "Kaitlan Wong"
+format: html
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(readxl)
+```
+
+```{r}
+# Read the Excel file
+data <- read_excel("C:/Users/kaitl/Documents/Every Texan/R/ADA/ERS Nutritional Counseling/Nutritional Counseling ERS 2019 2022.xlsx")
+
+# Print the first few rows of the data frame
+head(data)
+```
+
+```{r}
+# Convert disease rate variable to numeric
+data$`Utilizerz per 1,000` <- as.numeric(data$`Utilizerz per 1,000`)
+
+
+# Create the double bar chart
+ggplot(data, aes(x = `Utilizerz per 1,000`, y = `Age Group`, fill = as.factor(Year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    x = "Utilizers per 1,000",
+    y = "Age Group",
+    fill = "Year",
+    title = "Nutritional Counseling Utilization Rate for Active Employees Enrolled\nin Texas Employee Retirement Systems Health Plans by Age Groups\nPer 1000, 2019-2022",
+    caption = "Source: Every Texan Open Records Request to Employee Retirement Systems of Texas." # *Data limited to active employees and their dependents.
+  ) +
+  scale_fill_manual(values = c("2019" = "#0072B2", "2022" = "#D55E00")) +  # Set custom colors for bars
+  geom_text(aes(label = sprintf("%.1f", `Utilizerz per 1,000`)), position = position_dodge(width = 0.9), vjust = .5, hjust = 1.25, size = 3) +  # Add bar labels slightly down
+  theme_minimal() +
+  theme(axis.title.y = element_text(margin = margin(r = 10)), plot.caption = element_text(hjust = 18)) # Add margin between y-axis labels and title and Right-align caption
+
+
+# Save the graph as an image
+ggsave("Nutritional Counseling by age 2019-22.png", width = 10, height = 6, units = "in")
+
+```
